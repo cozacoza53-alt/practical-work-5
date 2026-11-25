@@ -1,0 +1,17 @@
+extends layout
+
+block title
+    | Список завдань
+
+block content
+    h1 Мій список завдань
+
+    ul
+        each task in tasks
+            li
+                if task.completed
+                    span(style="text-decoration: line-through; color: green;")= task.title
+                    strong  — Виконано
+                else
+                    span= task.title
+                    strong  — Не виконано
