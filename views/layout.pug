@@ -1,11 +1,16 @@
-Doctype html
+doctype html
 html(lang="uk")
     head
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
         title
-    block title
-        | To-Do List
+            block title
+                | To-Do List
+
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css")
+        script(src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js")
+
         style.
             body {
                 font-family: Arial, sans-serif;
@@ -13,6 +18,7 @@ html(lang="uk")
                 margin: 0;
                 padding: 40px;
             }
+
             .container {
                 max-width: 700px;
                 margin: auto;
@@ -21,10 +27,14 @@ html(lang="uk")
                 border-radius: 12px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
+
             h1 {
                 text-align: center;
                 color: #333;
             }
+
     body
         .container
             block content
+
+        block scripts
