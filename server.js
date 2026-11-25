@@ -1,34 +1,12 @@
 import express from 'express';
-import Joi from 'joi';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
 
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', './views');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-const taskSchema = Joi.object({
-    title: Joi.string()
-        .min(3)
-        .max(100)
-        .required()
-        .messages({
-            'string.empty': 'Назва завдання обов’язкова',
-            'string.min': 'Назва завдання повинна містити мінімум 3 символи',
-            'string.max': 'Назва завдання повинна містити максимум 100 символів',
-            'any.required': 'Назва завдання обов’язкова',
-            'string.base': 'Назва завдання повинна бути рядком'
-        })
-});
 
 let tasks = [
     { id: 1, title: 'Вивчити Node.js', completed: false },
@@ -43,27 +21,23 @@ app.get('/api/tasks', (req, res) => {
 });
 
 app.post('/api/tasks', (req, res) => {
-    const { error, value } = taskSchema.validate(req.body);
+    const { title } = req.body;
 
-    if (error) {
+    if (!title || !title.trim()) {
         return res.status(400).json({
-            message: error.details[0].message,
-            details: error.details
+            message: 'Назва завдання обов’язкова'
         });
     }
 
     const newTask = {
         id: nextId++,
-        title: value.title.trim(),
+        title: title.trim(),
         completed: false
     };
 
     tasks.push(newTask);
 
-    res.status(201).json({
-        message: 'Завдання успішно додано',
-        task: newTask
-    });
+    res.status(201).json(newTask);
 });
 
 app.put('/api/tasks/:id', (req, res) => {
@@ -78,10 +52,7 @@ app.put('/api/tasks/:id', (req, res) => {
 
     task.completed = !task.completed;
 
-    res.status(200).json({
-        message: 'Статус завдання успішно змінено',
-        task: task
-    });
+    res.status(200).json(task);
 });
 
 app.delete('/api/tasks/:id', (req, res) => {
@@ -96,9 +67,7 @@ app.delete('/api/tasks/:id', (req, res) => {
 
     tasks.splice(taskIndex, 1);
 
-    res.status(200).json({
-        message: 'Завдання успішно видалено'
-    });
+    res.status(204).send();
 });
 
 app.get('/tasks', (req, res) => {
